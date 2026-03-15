@@ -16,7 +16,7 @@ Este proyecto se centra en el diseño, implementación y explotación de una bas
 
 ## Visualizacion del Modelo (DER)
 
-![Diagrama Entidad Relación](https://github.com/tu-usuario/tu-repo/blob/main/doc/tu-imagen-der.png?raw=true)
+![Diagrama Entidad Relación](https://github.com/LUXI4NO/sql-portfolio-engineering/blob/main/Sistema-gestion-estudiantil-sql/Model/DER.png?raw=true)
 
 *El modelo utiliza una arquitectura normalizada en 3FN para garantizar la integridad referencial y evitar la redundancia de datos.*
 
