@@ -16,7 +16,7 @@ Este proyecto consiste en el diseño e implementación de una base de datos rela
 
 ## Visualización del Modelo (DER)
 
-![Diagrama Entidad Relación](https://github.com/LUXI4NO/Sistema-gestion-biblioteca-sql/blob/main/Model/DER.png?raw=true)
+![Diagrama Entidad Relación](https://github.com/LUXI4NO/sql-portfolio-engineering/blob/main/UNAJ%20-%20Sistema%20de%20Gesti%C3%B3n%20de%20Biblioteca%20-%20SQL/Model/DER.png?raw=true)
 
 *El modelo aplica normalización en **3FN** y motor **InnoDB** para asegurar transacciones ACID y consistencia en el stock de libros.*
 
