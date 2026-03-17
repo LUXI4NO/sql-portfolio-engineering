@@ -1,60 +1,42 @@
-CREATE DATABASE SistemaEstudiantil;
-USE SistemaEstudiantil;
+CREATE DATABASE IF NOT EXISTS gestion_biblioteca;
+USE gestion_biblioteca;
 
-CREATE TABLE estudiantes (
-    id_estudiante INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    dni VARCHAR(15) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    f_nacimiento DATE,
-    f_ingreso DATE DEFAULT (CURRENT_DATE)
-);
-
-CREATE TABLE profesores (
-    id_profesor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    dni VARCHAR(15) UNIQUE NOT NULL,
-    especialidad VARCHAR(100)
-);
-
-CREATE TABLE materias (
-    id_materia INT AUTO_INCREMENT PRIMARY KEY,
+-- 2. Tabla de Autores (Para normalizar y cumplir con 3FN)
+CREATE TABLE autores (
+    id_autor INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    obs_materia VARCHAR(255),
-    carga_hs INT NOT NULL
+    nacionalidad VARCHAR(50)
 );
 
-CREATE TABLE comisiones (
-    id_comision INT AUTO_INCREMENT PRIMARY KEY,
-    id_materia INT NOT NULL,
-    id_profesor INT NOT NULL,
-    cuatrimestre VARCHAR(20) NOT NULL,
-    turno VARCHAR(10) NOT NULL,
-    FOREIGN KEY (id_materia) REFERENCES materias(id_materia),
-    FOREIGN KEY (id_profesor) REFERENCES profesores(id_profesor)
+-- 3. Tabla de Libros
+CREATE TABLE libros (
+    id_libro INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    id_autor INT,
+    isbn VARCHAR(20) UNIQUE NOT NULL,
+    stock INT DEFAULT 1 CHECK (stock >= 0),
+    FOREIGN KEY (id_autor) REFERENCES autores(id_autor) 
+    ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE TABLE inscripciones (
-    id_inscripcion INT AUTO_INCREMENT PRIMARY KEY,
-    id_estudiante INT NOT NULL,
-    id_comision INT NOT NULL,
-    anio_lectivo INT NOT NULL,
-    estado_alumno ENUM('Regular','Libre','Finalizado') NOT NULL,
-    FOREIGN KEY (id_estudiante) REFERENCES estudiantes(id_estudiante) ON DELETE CASCADE,
-    FOREIGN KEY (id_comision) REFERENCES comisiones(id_comision)
+-- 4. Tabla de Usuarios
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE calificaciones (
-    id_nota INT AUTO_INCREMENT PRIMARY KEY,
-    id_inscripcion INT NOT NULL,
-    tipo_examen VARCHAR(50) NOT NULL,
-    valor_nota DECIMAL(4,2) NOT NULL,
-    FOREIGN KEY (id_inscripcion) REFERENCES inscripciones(id_inscripcion) ON DELETE CASCADE
+-- 5. Tabla de Prestamos (La que maneja la lógica y concurrencia)
+CREATE TABLE prestamos (
+    id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+    id_libro INT NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha_salida DATE NOT NULL,
+    fecha_vencimiento DATE NOT NULL,
+    fecha_devolucion_real DATE,
+    estado ENUM('Pendiente', 'Devuelto', 'Vencido') DEFAULT 'Pendiente',
+    FOREIGN KEY (id_libro) REFERENCES libros(id_libro),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
-
-CREATE INDEX idx_insc_estudiante ON inscripciones(id_estudiante);
-CREATE INDEX idx_insc_comision ON inscripciones(id_comision);
-CREATE INDEX idx_calif_inscripcion ON calificaciones(id_inscripcion);
-CREATE INDEX idx_materia_nombre ON materias(nombre);
